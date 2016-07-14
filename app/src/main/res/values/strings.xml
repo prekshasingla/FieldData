@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">FieldData</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_store">StoreActivity</string>
+    <string name="title_activity_store_detail">StoreDetailActivity</string>
+    <string name="title_activity_retrieve">RetrieveActivity</string>
+    <string name="title_activity_retrieve_detail">RetrieveDetailActivity</string>
+    <string name="release_date">Release Date</string>
+    <string name="user_rating">User Rating</string>
+    <string name="read_reviews">Read Reviews</string>
+    <string name="synopsis">Synopsis</string>
+    <string name="poster_description">Poster View</string>
+    <string name="reviews">Reviews</string>
+</resources>
