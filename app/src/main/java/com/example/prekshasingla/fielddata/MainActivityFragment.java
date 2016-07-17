@@ -2,6 +2,7 @@ package com.example.prekshasingla.fielddata;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,20 @@ public class MainActivityFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        new Handler().postDelayed(new Runnable() {
+
+            // Using handler with postDelayed called runnable run method
+
+            @Override
+            public void run() {
+                Intent i = new Intent(getActivity(),StoreActivity.class);
+                startActivity(i);
+
+                // close this activity
+                getActivity().finish();
+            }
+        }, 5*1000);
+/*
         Button storebtn= (Button)rootView.findViewById(R.id.Store_btn);
         //storebtn.performClick();
         storebtn.setOnClickListener(new View.OnClickListener() {
@@ -49,7 +64,7 @@ public class MainActivityFragment extends Fragment {
                 Toast.makeText(getActivity(), "Retrieve", Toast.LENGTH_SHORT).show();
                }
         });
-
+*/
         return rootView;
     }
 }

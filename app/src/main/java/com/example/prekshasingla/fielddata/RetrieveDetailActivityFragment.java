@@ -38,7 +38,7 @@ public class RetrieveDetailActivityFragment extends Fragment {
         dba= new DBAdapter(getActivity());
 
         final String id;
-        final byte[] image;
+        final String image;
         final String latitude;
         final String longitude;
         final String category;
@@ -46,7 +46,7 @@ public class RetrieveDetailActivityFragment extends Fragment {
 
 
         Intent i = getActivity().getIntent();
-        image = i.getByteArrayExtra("image");
+        image = i.getStringExtra("image");
         latitude = i.getStringExtra("latitude");
         longitude = i.getStringExtra("longitude");
         category = i.getStringExtra("category");
@@ -99,8 +99,10 @@ public class RetrieveDetailActivityFragment extends Fragment {
         });
 
 
-        ByteArrayInputStream imageStream = new ByteArrayInputStream(image);
+        Bitmap photo=dba.base64ToBitmap(image);
+        /*ByteArrayInputStream imageStream = new ByteArrayInputStream(image);
         Bitmap photo = BitmapFactory.decodeStream(imageStream);
+        */
         image_1.setImageBitmap(photo);
 
         latitude_1.setText("Latitude " +latitude);

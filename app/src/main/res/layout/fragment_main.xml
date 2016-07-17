@@ -9,18 +9,15 @@
     tools:context="com.example.prekshasingla.fielddata.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
-      <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Store"
-        android:id="@+id/Store_btn"
-        android:layout_alignParentLeft="true"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:text="Retrieve"
-        android:id="@+id/Retrieve_btn"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/welcome_image"
+        android:src="@drawable/rmsi"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:padding="2dp"
         />
-
 </RelativeLayout>

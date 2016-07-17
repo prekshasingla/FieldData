@@ -24,12 +24,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher"/>
-        <Button
-            android:id="@+id/btnSelectPhoto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Capture Image" />
 
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:orientation="horizontal">
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Image"
+            android:id="@+id/btnSelectPhoto"
+            android:layout_below="@+id/ivImage"
+            android:layout_alignParentLeft="true"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:text="Video"
+            android:id="@+id/btnSelectVideo"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivImage"
+            android:layout_alignParentRight="true"
+            />
+</LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,12 +59,10 @@
 
         </LinearLayout>
         <Button
-            android:id="@+id/store_button"
+            android:id="@+id/save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Store" />
-
-
+            android:text="Save" />
 
     </LinearLayout>
 

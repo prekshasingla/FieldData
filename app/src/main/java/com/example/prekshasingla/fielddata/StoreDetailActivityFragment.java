@@ -2,11 +2,13 @@ package com.example.prekshasingla.fielddata;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -15,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +43,11 @@ import java.util.List;
  */
 public class StoreDetailActivityFragment extends Fragment {
 
+
+    public static final String TAG = StoreDetailActivityFragment.class.getSimpleName();
+
     private static final int CAMERA_REQUEST = 1888;
+    static final int REQUEST_VIDEO_CAPTURE = 1;
     private ImageView imageView;
     List list;
     LinearLayout linearLayout,labelLayout;
@@ -47,12 +55,12 @@ public class StoreDetailActivityFragment extends Fragment {
     EditText ed;
     TextView tv;
     ArrayList<String> textList;
-    Button store,btn;
+    Button save,btn,videoBtn;
     int j;
     View rootView;
     ArrayList<String> labels;
-    byte[] image=null;
-    String text=null,category=null,latitude=null,longitude=null;
+    //byte[] image=null;
+    String text=null,category=null,latitude=null,longitude=null,image=null;
     DBAdapter dba;
 
     public StoreDetailActivityFragment() {
@@ -73,7 +81,7 @@ public class StoreDetailActivityFragment extends Fragment {
 
         imageView = (ImageView)rootView.findViewById(R.id.ivImage);
         btn= (Button)rootView.findViewById(R.id.btnSelectPhoto);
-        store= (Button)rootView.findViewById(R.id.store_button);
+        save= (Button)rootView.findViewById(R.id.save_button);
         btn.performClick();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,21 +89,21 @@ public class StoreDetailActivityFragment extends Fragment {
 
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
-/*
-                if(checkUserPermission()) {
-                    LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    latitude= ""+location.getLatitude();
-                    longitude=""+location.getLongitude();
-                    loc=latitude+longitude;
-                    TextView tv1 = new TextView(getActivity());
-                    tv1.setText(loc);
-                    linearLayout.addView(tv1);
-
-                }
-            */
             }
         });
+
+        videoBtn=(Button)rootView.findViewById(R.id.btnSelectVideo);
+        videoBtn.performClick();
+        videoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+
+            }
+        });
+
 
         labels=showLabel(text);
         View []convertView=new View[labels.size()];
@@ -108,7 +116,7 @@ public class StoreDetailActivityFragment extends Fragment {
             labelLayout.addView(convertView[j]);
         }
 
-        store.setOnClickListener(
+        save.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
 
@@ -128,14 +136,9 @@ public class StoreDetailActivityFragment extends Fragment {
                             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             latitude= ""+location.getLatitude();
                             longitude=""+location.getLongitude();
-                   /* loc=latitude+longitude;
-                    TextView tv1 = new TextView(getActivity());
-                    tv1.setText(loc);
-                    linearLayout.addView(tv1);
-                    */
                         }
 
-                        if(image!=null && latitude!=null && longitude!=null && text!=null && category!=null){
+                        if(latitude!=null && longitude!=null && category!=null){
                             try {
                                 dba.open();
                             } catch (SQLException e) {
@@ -147,7 +150,7 @@ public class StoreDetailActivityFragment extends Fragment {
                             Toast.makeText(getActivity(), "Saving", Toast.LENGTH_LONG).show();
                         }
                         else{
-                            Toast.makeText(getActivity(), "Please fill all the fields", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Loaction not available", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -155,17 +158,20 @@ public class StoreDetailActivityFragment extends Fragment {
         return rootView;
     }
 
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
 
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            image = dba.bitmapToBase64(photo);
+            /*ByteArrayOutputStream out = new ByteArrayOutputStream();
             photo.compress(Bitmap.CompressFormat.PNG, 100, out);
             image=out.toByteArray();
-            //imageView.setVisibility(View.VISIBLE);
-            //btn.setVisibility(View.INVISIBLE);
+            */
             imageView.setImageBitmap(photo);
+        }
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
+            Uri videoUri = data.getData();
+            //mVideoView.setVideoURI(videoUri);
         }
     }
 
@@ -173,7 +179,6 @@ public class StoreDetailActivityFragment extends Fragment {
     {   String[] items = text.split(",");
         ArrayList<String> list=new ArrayList<String>(Arrays.asList(items));
         return list;
-
     }
 
     public String combineLabels(ArrayList<String> text)

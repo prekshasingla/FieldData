@@ -8,7 +8,7 @@ import java.sql.Blob;
 public class FieldData {
 
     String id;
-    byte[] image;
+    String image;
     String latitude;
     String longitude;
     String text;
@@ -26,11 +26,11 @@ public class FieldData {
         this.id = id;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -68,7 +68,7 @@ public class FieldData {
 
 
 
-    public FieldData(String id, byte[] image, String latitude, String longitude, String text, String category) {
+    public FieldData(String id, String image, String latitude, String longitude, String text, String category) {
         super();
         this.image = image;
         this.latitude=latitude;

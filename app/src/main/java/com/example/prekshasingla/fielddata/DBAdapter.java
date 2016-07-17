@@ -5,7 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 
@@ -33,7 +37,7 @@ public class DBAdapter {
         DBHelper.close();
     }
 
-    public void updateFavourite(byte[] image, String latitude, String longitude, String text, String category){
+    public void updateFavourite(String image, String latitude, String longitude, String text, String category){
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(FieldDataDbHelper.COLUMN_IMAGE, image);
@@ -66,12 +70,24 @@ public class DBAdapter {
 
         while (c.moveToNext())
         {
-            result[i]= new FieldData(c.getString(0),c.getBlob(1),c.getString(2),c.getString(3),c.getString(4),c.getString(5));
+            result[i]= new FieldData(c.getString(0),c.getString(1),c.getString(2),c.getString(3),c.getString(4),c.getString(5));
             i++;
         }
        // List<Movie> movieList=new ArrayList<>(Arrays.asList(result));
             return result;
         }
+
+    public String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    public Bitmap base64ToBitmap(String b64) {
+        byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+    }
 
     public void removeFavourite(String movieid){
         String qry="delete from fielddata where id='"+movieid+"';";
@@ -100,7 +116,7 @@ public class DBAdapter {
         public void onCreate(SQLiteDatabase db) {
             final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_IMAGE + " BLOB NOT NULL, " +
+                    COLUMN_IMAGE + " TEXT, " +
                     COLUMN_LATITUDE + " TEXT NOT NULL, " +
                     COLUMN_LONGITUDE + " TEXT NOT NULL, " +
                     COLUMN_TEXT + " TEXT, " +
