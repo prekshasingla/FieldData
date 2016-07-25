@@ -9,8 +9,7 @@
     tools:context="com.example.prekshasingla.fielddata.StoreActivityFragment"
     tools:showIn="@layout/activity_store">
 
-
-    <Spinner
+    <com.example.prekshasingla.fielddata.MySpinner
         android:id="@+id/spinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

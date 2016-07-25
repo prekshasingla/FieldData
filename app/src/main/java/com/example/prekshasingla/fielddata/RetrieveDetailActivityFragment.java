@@ -34,7 +34,6 @@ public class RetrieveDetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         dba= new DBAdapter(getActivity());
 
         final String id;
@@ -43,6 +42,7 @@ public class RetrieveDetailActivityFragment extends Fragment {
         final String longitude;
         final String category;
         final String text;
+        final String video;
 
 
         Intent i = getActivity().getIntent();
@@ -52,6 +52,7 @@ public class RetrieveDetailActivityFragment extends Fragment {
         category = i.getStringExtra("category");
         text = i.getStringExtra("text");
         id = i.getStringExtra("id");
+        video=i.getStringExtra("video");
 
         View rootView = inflater.inflate(R.layout.fragment_retrieve_detail, container, false);
 
@@ -82,7 +83,7 @@ public class RetrieveDetailActivityFragment extends Fragment {
                     } catch (SQLException e) {
                         Log.e("SqlException", e.toString());
                     }
-                    dba.updateFavourite(image, latitude,longitude,text,category);
+                    dba.updateFavourite(image,video,latitude,longitude,text,category);
                     dba.close();
                     Toast.makeText(getContext(), "Added to database", Toast.LENGTH_SHORT).show();
                 } else {
@@ -99,12 +100,13 @@ public class RetrieveDetailActivityFragment extends Fragment {
         });
 
 
-        Bitmap photo=dba.base64ToBitmap(image);
         /*ByteArrayInputStream imageStream = new ByteArrayInputStream(image);
         Bitmap photo = BitmapFactory.decodeStream(imageStream);
         */
-        image_1.setImageBitmap(photo);
-
+        if(image!=null) {
+            Bitmap photo = dba.base64ToBitmap(image);
+            image_1.setImageBitmap(photo);
+        }
         latitude_1.setText("Latitude " +latitude);
         longitude_1.setText("Longitude " + longitude);
         category_1.setText("Category " + category);

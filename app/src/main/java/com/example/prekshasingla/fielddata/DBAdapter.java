@@ -7,14 +7,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 
 /**
- * Created by prekshasingla on 4/22/2016.
+ * Created by prekshasingla on 7/17/2016.
  */
 
 
@@ -37,10 +44,11 @@ public class DBAdapter {
         DBHelper.close();
     }
 
-    public void updateFavourite(String image, String latitude, String longitude, String text, String category){
+    public void updateFavourite(String image,String video, String latitude, String longitude, String text, String category){
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(FieldDataDbHelper.COLUMN_IMAGE, image);
+        contentValues.put(FieldDataDbHelper.COLUMN_VIDEO, video);
         contentValues.put(FieldDataDbHelper.COLUMN_LATITUDE, latitude);
         contentValues.put(FieldDataDbHelper.COLUMN_LONGITUDE, longitude);
         contentValues.put(FieldDataDbHelper.COLUMN_TEXT, text);
@@ -58,7 +66,7 @@ public class DBAdapter {
         return  isFavourite;
     }
 
-    public FieldData[] showFavourite()
+    public FieldData[] show()
     {
         int count=0,i=0;
         String qry="select * from fielddata;";
@@ -70,8 +78,9 @@ public class DBAdapter {
 
         while (c.moveToNext())
         {
-            result[i]= new FieldData(c.getString(0),c.getString(1),c.getString(2),c.getString(3),c.getString(4),c.getString(5));
+            result[i]= new FieldData(c.getInt(0),c.getString(1),c.getString(2),c.getString(3),c.getString(4),c.getString(5),c.getString(6));
             i++;
+            //Log.d("Image ", ""+c.getColumnIndex(""));
         }
        // List<Movie> movieList=new ArrayList<>(Arrays.asList(result));
             return result;
@@ -84,6 +93,34 @@ public class DBAdapter {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
+    public String fileToBase64(File file)
+    {
+        String encodedString = null;
+
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        byte[] bytes;
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bytes = output.toByteArray();
+        encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
+        //Log.i("Strng", encodedString);
+        return  encodedString;
+
+    }
+
     public Bitmap base64ToBitmap(String b64) {
         byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
@@ -93,12 +130,13 @@ public class DBAdapter {
         String qry="delete from fielddata where id='"+movieid+"';";
         db.execSQL(qry);
     }
-
     public class FieldDataDbHelper extends SQLiteOpenHelper {
 
         public static final String TABLE_NAME = "fielddata";
         public static final String ID = "id";
         public static final String COLUMN_IMAGE = "image";
+        public static final String COLUMN_VIDEO="video";
+
         public static final String COLUMN_TEXT = "text";
         public static final String COLUMN_LATITUDE = "latitude";
 
@@ -117,6 +155,7 @@ public class DBAdapter {
             final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_IMAGE + " TEXT, " +
+                    COLUMN_VIDEO+ " TEXT, "+
                     COLUMN_LATITUDE + " TEXT NOT NULL, " +
                     COLUMN_LONGITUDE + " TEXT NOT NULL, " +
                     COLUMN_TEXT + " TEXT, " +
@@ -124,8 +163,6 @@ public class DBAdapter {
 
             db.execSQL(SQL_CREATE_MOVIE_TABLE);
         }
-
-
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

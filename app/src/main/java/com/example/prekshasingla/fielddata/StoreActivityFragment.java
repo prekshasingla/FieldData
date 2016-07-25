@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -48,7 +49,7 @@ public class StoreActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_store, container, false);
 
         // Spinner element
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner);
+        MySpinner spinner = (MySpinner) rootView.findViewById(R.id.spinner);
 
         // Spinner Drop down elements
         categories = new ArrayList<String>();
@@ -61,7 +62,27 @@ public class StoreActivityFragment extends Fragment {
         categories.add("Category6");
 
         // Creating adapter for spinner
-        dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categories);
+        dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categories){ @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+            View v = null;
+
+            if (position == 0) {
+                TextView tv = new TextView(getContext());
+                tv.setHeight(0);
+                tv.setVisibility(View.GONE);
+                v = tv;
+            }
+            else {
+
+                v = super.getDropDownView(position, null, parent);
+            }
+
+            parent.setVerticalScrollBarEnabled(false);
+            return v;
+        }
+        };
+
 
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -69,8 +90,8 @@ public class StoreActivityFragment extends Fragment {
         // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
 
-        //FetchCategories fetchCategories=new FetchCategories();
-        //fetchCategories.execute();
+        FetchCategories fetchCategories=new FetchCategories();
+        fetchCategories.execute();
 
         // Spinner click listener
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -134,7 +155,7 @@ public class StoreActivityFragment extends Fragment {
 
             try {
 
-                URL url = new URL("http://127.0.0.1:8080/FieldDataDBConnect/Retrieve");
+                URL url = new URL("http://192.168.1.105/fielddata/db_connect.php");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -183,9 +204,9 @@ public class StoreActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                categories.clear();
-                categories.add(result);
-                dataAdapter.notifyDataSetChanged();
+               // categories.clear();
+                //categories.add(result);
+                //dataAdapter.notifyDataSetChanged();
             }
         }
     }

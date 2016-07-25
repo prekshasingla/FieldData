@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.prekshasingla.fielddata.StoreActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_review"
         android:orderInCategory="100"
         android:title="Review"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_sync"
+        android:orderInCategory="100"
+        android:title="Sync"
         app:showAsAction="never" />
 </menu>

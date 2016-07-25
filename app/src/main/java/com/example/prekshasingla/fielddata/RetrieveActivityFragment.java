@@ -53,6 +53,7 @@ public class RetrieveActivityFragment extends Fragment {
                 FieldData currentMovie = moviesAdapter.getItem(position);
                 Intent i = new Intent(getActivity(),RetrieveDetailActivity.class);
                 i.putExtra("image",currentMovie.image);
+                i.putExtra("video",currentMovie.video);
                 i.putExtra("latitude",currentMovie.latitude);
                 i.putExtra("longitude",currentMovie.longitude);
                 i.putExtra("text",currentMovie.text);
@@ -73,7 +74,7 @@ public class RetrieveActivityFragment extends Fragment {
             catch (SQLException e) {
                 e.printStackTrace();
             }
-            return dba.showFavourite();
+            return dba.show();
         }
 
         @Override

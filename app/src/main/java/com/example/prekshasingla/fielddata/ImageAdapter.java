@@ -3,6 +3,8 @@ package com.example.prekshasingla.fielddata;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,16 +36,18 @@ class ImageAdapter extends ArrayAdapter<FieldData>
 
         ImageView posterView = (ImageView) convertView.findViewById(R.id.imageView);
         Bitmap photo=null;
-        String img=fieldData.image;
-        if(img.getBytes()!=null) {
-            byte[] imageAsBytes = Base64.decode(img.getBytes(), Base64.DEFAULT);
-            photo = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+        if(fieldData.image!=null) {
+            String img = fieldData.image;
+            if (img.getBytes() != null) {
+                byte[] imageAsBytes = Base64.decode(img.getBytes(), Base64.DEFAULT);
+                photo = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+                posterView.setImageBitmap(photo);
+            }
 
         }
-
         //ByteArrayInputStream imageStream = new ByteArrayInputStream(img);
         //Bitmap photo = BitmapFactory.decodeStream(imageStream);
-        posterView.setImageBitmap(photo);
+        //posterView.setImageBitmap(photo);
   //        Picasso.with(getContext()).load(movie.image).into(posterView);
 
         return convertView;
