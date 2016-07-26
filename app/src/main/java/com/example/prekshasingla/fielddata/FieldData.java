@@ -7,7 +7,7 @@ import java.sql.Blob;
  */
 public class FieldData {
 
-    int id=-1;
+    String id=null;
     String image=null;
     String latitude=null;
     String longitude=null;
@@ -27,11 +27,11 @@ public class FieldData {
         super();
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -77,7 +77,7 @@ public class FieldData {
 
 
 
-    public FieldData(int id, String image,String video, String latitude, String longitude, String text, String category) {
+    public FieldData(String id, String image,String video, String latitude, String longitude, String text, String category) {
         super();
         this.image = image;
         this.video=video;

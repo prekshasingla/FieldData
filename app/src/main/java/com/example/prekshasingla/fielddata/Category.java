@@ -5,7 +5,7 @@ package com.example.prekshasingla.fielddata;
  */
 public class Category {
 
-    int id=-1;
+    String id=null;
     String name=null;
     String labels=null;
 
@@ -13,11 +13,11 @@ public class Category {
         super();
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -37,7 +37,7 @@ public class Category {
         this.labels = labels;
     }
 
-    public Category(int id, String name, String labels) {
+    public Category(String id, String name, String labels) {
         super();
         this.id = id;
         this.name=name;

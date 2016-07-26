@@ -63,30 +63,11 @@ public class RetrieveDetailActivityFragment extends Fragment {
         TextView text_1 = (TextView) rootView.findViewById(R.id.labels_list);
 
 
-
         CheckBox star=(CheckBox)rootView.findViewById(R.id.star);
-        try{
-            dba.open();
-        }catch (SQLException e){
-            Log.e("SqlException",e.toString());
-        }
-        int isFavourite=dba.isFavourite(id);
-        dba.close();
-        if(isFavourite==1)
-            star.setChecked(true);
+        star.setChecked(true);
         star.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (((CheckBox) v).isChecked()) {
-                    try {
-                        dba.open();
-                    } catch (SQLException e) {
-                        Log.e("SqlException", e.toString());
-                    }
-                    dba.updateFavourite(image,video,latitude,longitude,text,category);
-                    dba.close();
-                    Toast.makeText(getContext(), "Added to database", Toast.LENGTH_SHORT).show();
-                } else {
                     try {
                         dba.open();
                     } catch (SQLException e) {
@@ -94,10 +75,12 @@ public class RetrieveDetailActivityFragment extends Fragment {
                     }
                     dba.removeFavourite(id);
                     dba.close();
-                    Toast.makeText(getContext(), "Removed from database", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Removed from Favourites", Toast.LENGTH_SHORT).show();
                 }
-            }
+
         });
+
+
 
 
         /*ByteArrayInputStream imageStream = new ByteArrayInputStream(image);

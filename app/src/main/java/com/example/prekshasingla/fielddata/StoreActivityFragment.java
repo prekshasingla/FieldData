@@ -155,7 +155,9 @@ public class StoreActivityFragment extends Fragment {
 
             try {
 
-                URL url = new URL("http://192.168.1.105/fielddata/db_connect.php");
+                //URL url = new URL("http://192.168.1.105/fielddata/db_connect.php");
+                URL url = new URL("http://192.168.1.34/fielddata/db_connect.php");
+
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();

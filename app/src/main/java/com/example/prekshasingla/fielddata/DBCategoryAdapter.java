@@ -59,7 +59,7 @@ public class DBCategoryAdapter {
 
         while (c.moveToNext())
         {
-            result[i]= new Category(c.getInt(0),c.getString(1),c.getString(2));
+            result[i]= new Category(c.getString(0),c.getString(1),c.getString(2));
             i++;
         }
             return result;

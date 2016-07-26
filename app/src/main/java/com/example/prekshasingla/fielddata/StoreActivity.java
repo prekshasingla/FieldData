@@ -65,8 +65,9 @@ public class StoreActivity extends AppCompatActivity {
             } catch (SQLException e) {
                 Log.e("SqlException", e.toString());
             }
-            new SyncTask().execute(dba.show());
+            FieldData[] fieldDatas=dba.show();
             dba.close();
+            new SyncTask().execute(fieldDatas);
 
             Toast.makeText(this, "Saving", Toast.LENGTH_LONG).show();
 
