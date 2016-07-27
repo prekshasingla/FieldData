@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +19,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
 
-    DBCategoryAdapter dba;
+    DBAdapter dba;
+    ArrayList<Category> categories;
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dba = new DBAdapter(getActivity());
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -35,38 +47,39 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        dba = new DBCategoryAdapter(getActivity());
 
         new Handler().postDelayed(new Runnable() {
-
             // Using handler with postDelayed called runnable run method
-
             @Override
             public void run() {
                 Intent i = new Intent(getActivity(), StoreActivity.class);
                 startActivity(i);
-
                 // close this activity
                 getActivity().finish();
             }
         }, 3 * 1000);
 
+
+        if(CheckNetwork.isInternetAvailable(getActivity())) //returns true if internet available
+        {
+           new FetchCategories().execute();
+
+        }
         return rootView;
     }
-
 
     public class FetchCategories extends AsyncTask<Void, Void, Category[]> {
         private final String LOG_TAG = FetchCategories.class.getName();
 
+
         private Category[] getMoviesDatafromJson(String moviesJsonString)
                 throws JSONException {
-            final String OWM_RESULTS = "results";
-            final String OWM_ID = "id";
+
             final String OWM_NAME = "name";
             final String OWM_LABELS = "labels";
+            final String OWM_ID ="id";
 
-            JSONObject moviesJson = new JSONObject(moviesJsonString);
-            JSONArray moviesArray = moviesJson.getJSONArray(OWM_RESULTS);
+            JSONArray moviesArray = new JSONArray(moviesJsonString);
             Category[] resultObjects = new Category[moviesArray.length()];
 
             for (int i = 0; i < moviesArray.length(); i++) {
@@ -83,13 +96,13 @@ public class MainActivityFragment extends Fragment {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            Category[]type;
+            //Category[]type;
             String moviesJsonString = null;
 
             try {
 
                 //URL url = new URL("http://192.168.1.105/fielddata/db_connect.php");
-                URL url = new URL("http://192.168.1.34/fielddata/db_connect.php");
+                URL url = new URL("http://192.168.1.34/fielddata/db_select_category.php");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -138,12 +151,20 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(Category[] result) {
             if (result != null) {
+
+                for(int i=0;i<result.length;i++)
+                {
+                    Log.d("result ",result[i].id+result[i].name+result[i].labels);
+                   }
+                try {
+                    dba.open();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 dba.removeAll();
                 dba.add(result);
-                // categories.clear();
-                //categories.add(result);
-                //dataAdapter.notifyDataSetChanged();
-            }
+                }
         }
     }
 }

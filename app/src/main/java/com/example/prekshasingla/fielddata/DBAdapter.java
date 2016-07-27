@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by prekshasingla on 7/17/2016.
@@ -26,12 +28,12 @@ import java.sql.SQLException;
 
 
 public class DBAdapter {
-    private FieldDataDbHelper DBHelper;
+    private DbHelper DBHelper;
     static SQLiteDatabase db;
 
 
     public DBAdapter(Context context)    {
-        DBHelper = new FieldDataDbHelper(context);
+        DBHelper = new DbHelper(context);
     }
 
 
@@ -47,14 +49,14 @@ public class DBAdapter {
     public void updateFavourite(String image,String video, String latitude, String longitude, String text, String category){
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(FieldDataDbHelper.COLUMN_IMAGE, image);
-        contentValues.put(FieldDataDbHelper.COLUMN_VIDEO, video);
-        contentValues.put(FieldDataDbHelper.COLUMN_LATITUDE, latitude);
-        contentValues.put(FieldDataDbHelper.COLUMN_LONGITUDE, longitude);
-        contentValues.put(FieldDataDbHelper.COLUMN_TEXT, text);
-        contentValues.put(FieldDataDbHelper.COLUMN_CATEGORY, category);
+        contentValues.put(DbHelper.COLUMN_IMAGE, image);
+        contentValues.put(DbHelper.COLUMN_VIDEO, video);
+        contentValues.put(DbHelper.COLUMN_LATITUDE, latitude);
+        contentValues.put(DbHelper.COLUMN_LONGITUDE, longitude);
+        contentValues.put(DbHelper.COLUMN_TEXT, text);
+        contentValues.put(DbHelper.COLUMN_CATEGORY, category);
 
-        db.insert(FieldDataDbHelper.TABLE_NAME, null, contentValues);
+        db.insert(DbHelper.TABLE_NAME_FIELDDATA, null, contentValues);
     }
     public int isFavourite(String movieid){
         String qry="select * from fielddata where id='"+movieid+"';";
@@ -130,9 +132,62 @@ public class DBAdapter {
         String qry="delete from fielddata where id='"+movieid+"';";
         db.execSQL(qry);
     }
-    public class FieldDataDbHelper extends SQLiteOpenHelper {
 
-        public static final String TABLE_NAME = "fielddata";
+    public void removeAll(){
+        String qry="delete from category;";
+        db.execSQL(qry);
+    }
+
+    public ArrayList<String> showLabel(String text)
+    {   String[] items = text.split(",");
+        ArrayList<String> list=new ArrayList<String>(Arrays.asList(items));
+        return list;
+    }
+
+    public String combineLabels(ArrayList<String> text)
+    {
+        String a=text.get(0);
+        for(int i=1;i<text.size();i++)
+        {
+            a=a.concat(","+text.get(i));
+        }
+        return a;
+    }
+
+    public void add(Category[] types){
+
+        for(int i=0;i<types.length;i++) {
+            ContentValues contentValues = new ContentValues();
+
+            //contentValues.put(CategoryDbHelper.COLUMN_ID ,types[i].id);
+            contentValues.put(DbHelper.COLUMN_NAME, types[i].name);
+            contentValues.put(DbHelper.COLUMN_LABELS,types[i].labels);
+
+            db.insert(DbHelper.TABLE_NAME_CATEGORY, null, contentValues);
+        }
+    }
+
+    public Category[] showCategory()
+    {
+        int count=0,i=0;
+        String qry="select * from category;";
+        Cursor c=db.rawQuery(qry,null);
+        Category[] result;
+
+        count=c.getCount();
+        result=new Category[count];
+
+        while (c.moveToNext())
+        {
+            result[i]= new Category(c.getString(0),c.getString(1),c.getString(2));
+            i++;
+        }
+        return result;
+    }
+
+    public class DbHelper extends SQLiteOpenHelper {
+
+        public static final String TABLE_NAME_FIELDDATA = "fielddata";
         public static final String ID = "id";
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_VIDEO="video";
@@ -146,13 +201,19 @@ public class DBAdapter {
 
         static final String DATABASE_NAME = "fielddata.db";
 
-        public FieldDataDbHelper(Context context) {
+        public static final String TABLE_NAME_CATEGORY = "category";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_LABELS = "labels";
+
+
+        public DbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
+            final String SQL_CREATE_FIELDDATA_TABLE = "CREATE TABLE " + TABLE_NAME_FIELDDATA + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_IMAGE + " TEXT, " +
                     COLUMN_VIDEO+ " TEXT, "+
@@ -161,12 +222,22 @@ public class DBAdapter {
                     COLUMN_TEXT + " TEXT, " +
                     COLUMN_CATEGORY + " TEXT NOT NULL); ";
 
+            final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + TABLE_NAME_CATEGORY + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_NAME + " TEXT, " +
+                    COLUMN_LABELS + " TEXT ); ";
+
             db.execSQL(SQL_CREATE_MOVIE_TABLE);
+            db.execSQL(SQL_CREATE_FIELDDATA_TABLE);
+            Log.d("Created","Done");
+
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_FIELDDATA);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CATEGORY);
+
             onCreate(db);
         }
     }

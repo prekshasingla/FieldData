@@ -12,10 +12,10 @@
    }
 
    $sql =<<<EOF
-      CREATE TABLE TYPE
-      (ID INT PRIMARY KEY     NOT NULL,
+      CREATE TABLE CATEGORY
+      (ID INT PRIMARY KEY NOT NULL ,
       NAME           TEXT    ,
-      LABELS          JSON     );
+      LABELS          TEXT     );
 EOF;
 
    $ret = pg_query($db, $sql);

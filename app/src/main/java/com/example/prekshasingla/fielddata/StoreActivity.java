@@ -25,14 +25,6 @@ public class StoreActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         dba=new DBAdapter(this);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -60,17 +52,26 @@ public class StoreActivity extends AppCompatActivity {
 
         if (id == R.id.action_sync) {
 
-            try {
-                dba.open();
-            } catch (SQLException e) {
-                Log.e("SqlException", e.toString());
+            if(CheckNetwork.isInternetAvailable(this)) //returns true if internet available
+            {
+
+                try {
+                    dba.open();
+                } catch (SQLException e) {
+                    Log.e("SqlException", e.toString());
+                }
+                FieldData[] fieldDatas = dba.show();
+                dba.close();
+                new SyncTask().execute(fieldDatas);
+
+
+
+                Toast.makeText(this, "Synchronised", Toast.LENGTH_LONG).show();
             }
-            FieldData[] fieldDatas=dba.show();
-            dba.close();
-            new SyncTask().execute(fieldDatas);
-
-            Toast.makeText(this, "Saving", Toast.LENGTH_LONG).show();
-
+            else
+            {
+                Toast.makeText(this,"No Internet Connection",Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 
