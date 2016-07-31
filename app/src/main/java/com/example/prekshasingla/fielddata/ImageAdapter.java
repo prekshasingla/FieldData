@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 class ImageAdapter extends ArrayAdapter<FieldData>
 {
-    public ArrayList<FieldData> fieldDataList;
 
     public ImageAdapter(Activity context, ArrayList<FieldData> fieldDataList) {
         super(context, 0, fieldDataList);
@@ -33,7 +32,6 @@ class ImageAdapter extends ArrayAdapter<FieldData>
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_view, parent, false);
         }
 
-
         ImageView posterView = (ImageView) convertView.findViewById(R.id.imageView);
         Bitmap photo=null;
         if(fieldData.image!=null) {
@@ -43,13 +41,7 @@ class ImageAdapter extends ArrayAdapter<FieldData>
                 photo = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
                 posterView.setImageBitmap(photo);
             }
-
         }
-        //ByteArrayInputStream imageStream = new ByteArrayInputStream(img);
-        //Bitmap photo = BitmapFactory.decodeStream(imageStream);
-        //posterView.setImageBitmap(photo);
-  //        Picasso.with(getContext()).load(movie.image).into(posterView);
-
         return convertView;
     }
 

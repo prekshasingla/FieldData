@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Base64;
@@ -31,13 +32,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,9 +56,7 @@ public class StoreDetailActivityFragment extends Fragment {
     private static final int CAMERA_REQUEST = 1888;
     static final int REQUEST_VIDEO_CAPTURE = 1;
     private ImageView imageView;
-    List list;
     LinearLayout linearLayout,labelLayout;
-    String loc= "No Loc";
     EditText ed;
     TextView tv;
     ArrayList<String> textList;
@@ -61,13 +64,11 @@ public class StoreDetailActivityFragment extends Fragment {
     int j;
     View rootView;
     ArrayList<String> labels;
-    //byte[] image=null;
     String text=null,category=null,latitude=null,longitude=null,image=null,video=null;
     DBAdapter dba;
-    File file;
-    Uri videoUri;
-    LocationManager locationManager;
-GPS gps;
+    File videoFile;
+    Uri  videoUri;
+
 
     public StoreDetailActivityFragment() {
     }
@@ -82,7 +83,7 @@ GPS gps;
         textList=new ArrayList<String>();
         rootView = inflater.inflate(R.layout.fragment_store_detail, container, false);
 
-        gps=new GPS();
+
 
         linearLayout= (LinearLayout)rootView.findViewById(R.id.linearlayout);
         labelLayout= (LinearLayout)rootView.findViewById(R.id.labellayout);
@@ -115,7 +116,7 @@ GPS gps;
         });
 
 
-        labels=showLabel(text);
+        labels=Utils.showLabel(text);
         View []convertView=new View[labels.size()];
         for(j = 0; j <labels.size(); j++) {
             convertView[j]=LayoutInflater.from(getContext()).inflate(R.layout.label_layout, labelLayout , false);
@@ -139,7 +140,7 @@ GPS gps;
                             linearLayout.addView(tv1);
 //                                Log.v("EditText", ed.getText().toString());
                         }
-                        text=combineLabels(textList);
+                        text=Utils.combineLabels(textList);
 
                         if(checkUserPermission()) {
                             LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -182,49 +183,20 @@ GPS gps;
 
 
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            image = dba.bitmapToBase64(photo);
-
+            image = Utils.bitmapToBase64(photo);
             imageView.setImageBitmap(photo);
+
+
         }
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
             videoUri = data.getData();
-            file=new File(getRealPathFromUri(videoUri));
+            videoFile=new File(getRealPathFromUri(videoUri));
+            video=getRealPathFromUri(videoUri);
             //Log.i("Strng", file.toString());
-
-            dba.fileToBase64(file);
-            //mVideoView.setVideoURI(videoUri);
-        }
+            Log.d("data video",Utils.fileToBase64(videoFile));
+           }
     }
 
-    private String getRealPathFromUri(Uri tempUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = getActivity().getContentResolver().query(tempUri,  proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-    public ArrayList<String> showLabel(String text)
-    {   String[] items = text.split(",");
-        ArrayList<String> list=new ArrayList<String>(Arrays.asList(items));
-        return list;
-    }
-
-    public String combineLabels(ArrayList<String> text)
-    {
-        String a=text.get(0);
-        for(int i=1;i<text.size();i++)
-        {
-                a=a.concat(","+text.get(i));
-        }
-        return a;
-    }
 
     public boolean checkUserPermission()
     {
@@ -239,60 +211,18 @@ GPS gps;
         return flag;
     }
 
-    class GPS implements LocationListener {
-
-
-        public double latitude;
-        public double longitude;
-        public LocationManager locationManager;
-        public Criteria criteria;
-        public String bestProvider;
-
-
-        public boolean checkUserPermission()
-        {
-            int statusintfine = getActivity().getPackageManager().checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,getActivity().getPackageName());
-            int statusintcoarse = getActivity().getPackageManager().checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION,getActivity().getPackageName());
-            boolean flag=false;
-
-            if (statusintfine != PackageManager.PERMISSION_GRANTED && statusintcoarse != PackageManager.PERMISSION_GRANTED) {
-                flag = false;
+    private String getRealPathFromUri(Uri tempUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = getActivity().getContentResolver().query(tempUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
             }
-            else { flag=true; }
-            return flag;
-        }
-
-
-
-        @Override
-        public void onLocationChanged(Location location) {
-            //Hey, a non null location! Sweet!
-
-            if(checkUserPermission()) {
-                //remove location callback:
-                locationManager.removeUpdates(this);
-
-                //open the map:
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                Toast.makeText(getActivity(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-            }
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
         }
     }
 

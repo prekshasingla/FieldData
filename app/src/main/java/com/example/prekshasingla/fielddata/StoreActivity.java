@@ -1,6 +1,7 @@
 package com.example.prekshasingla.fielddata;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,18 +13,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.SQLException;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class StoreActivity extends AppCompatActivity {
 
     DBAdapter dba;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        dba=new DBAdapter(this);
+        dba = new DBAdapter(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -33,7 +41,8 @@ public class StoreActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_store, menu);
-        return true;    }
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -52,7 +61,7 @@ public class StoreActivity extends AppCompatActivity {
 
         if (id == R.id.action_sync) {
 
-            if(CheckNetwork.isInternetAvailable(this)) //returns true if internet available
+            if (CheckNetwork.isInternetAvailable(this)) //returns true if internet available
             {
 
                 try {
@@ -62,19 +71,84 @@ public class StoreActivity extends AppCompatActivity {
                 }
                 FieldData[] fieldDatas = dba.show();
                 dba.close();
+
                 new SyncTask().execute(fieldDatas);
-
-
-
-                Toast.makeText(this, "Synchronised", Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                Toast.makeText(this,"No Internet Connection",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+
+        super.onOptionsItemSelected(item);
+        return false;
     }
+
+    public class SyncTask extends AsyncTask<FieldData, Void, Void> {
+
+        private final String LOG_TAG = SyncTask.class.getName();
+
+        @Override
+        protected Void doInBackground(FieldData... fieldDatas) {
+
+            HttpURLConnection urlConnection = null;
+            URL url[] = new URL[fieldDatas.length];
+            try {
+
+                for (int i = 0; i < fieldDatas.length; i++) {
+
+                    if (fieldDatas[i].video != null) {
+                        File f = new File(fieldDatas[i].video);
+                        fieldDatas[i].video = Utils.fileToBase64(f);
+                        Log.d("Video", fieldDatas[i].video);
+                    }
+
+
+                    url[i] = new URL("http://pieronline.rmsi.com/Rapti_publish/RestServiceImpl.svc/InsertData?image='" + fieldDatas[i].image + "'&video='" + fieldDatas[i].video + "'&latitude=" + fieldDatas[i].latitude + "&longitude=" + fieldDatas[i].longitude + "&label=" + fieldDatas[i].text + "&category=" + fieldDatas[i].category);
+
+                    Log.d("image",fieldDatas[i].image);
+                    //Log.d("video",fieldDatas[i].video);
+                    Log.d("Lat",fieldDatas[i].latitude);
+                    urlConnection = (HttpURLConnection) url[i].openConnection();
+                    urlConnection.setReadTimeout(25000);
+                    urlConnection.setConnectTimeout(25000);
+                    urlConnection.setRequestMethod("GET");
+                    Log.d("URL", url[i].toString());
+                    urlConnection.connect();
+                    try {
+                        dba.open();
+                    } catch (SQLException e) {
+                        Log.e("SqlException", e.toString());
+                    }
+                    dba.removeFavourite(fieldDatas[i].id);
+                    dba.close();
+
+
+                    try {
+                        int responseCode = urlConnection.getResponseCode();
+
+                        if (responseCode == HttpsURLConnection.HTTP_OK) {
+                            Log.d("Connection ", "established");
+                        } else {
+
+                        }
+                    } catch (Exception e) {
+                    }
+
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                //urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            Toast.makeText(getApplication(), "Synchronised", Toast.LENGTH_LONG).show();
+        }
+    }
+
 }

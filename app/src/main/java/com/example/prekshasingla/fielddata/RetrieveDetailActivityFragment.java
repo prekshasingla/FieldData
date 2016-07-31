@@ -3,6 +3,7 @@ package com.example.prekshasingla.fielddata;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,8 +15,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.sql.SQLException;
 
 /**
@@ -25,7 +28,6 @@ public class RetrieveDetailActivityFragment extends Fragment {
 
 
     public static final String TAG = RetrieveDetailActivityFragment.class.getSimpleName();
-    private ListView mListView;
     private DBAdapter dba;
 
     public RetrieveDetailActivityFragment() {
@@ -57,14 +59,15 @@ public class RetrieveDetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_retrieve_detail, container, false);
 
         TextView latitude_1 = (TextView) rootView.findViewById(R.id.latitude);
-        ImageView image_1 = (ImageView) rootView.findViewById(R.id.moviePoster);
+        ImageView image_1 = (ImageView) rootView.findViewById(R.id.imageView);
+        //VideoView video_1=(VideoView) rootView.findViewById(R.id.videoView);
         TextView longitude_1 = (TextView) rootView.findViewById(R.id.longitude);
         TextView category_1 = (TextView) rootView.findViewById(R.id.category);
         TextView text_1 = (TextView) rootView.findViewById(R.id.labels_list);
 
 
         CheckBox star=(CheckBox)rootView.findViewById(R.id.star);
-        star.setChecked(true);
+        //star.setChecked(true);
         star.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,21 +78,30 @@ public class RetrieveDetailActivityFragment extends Fragment {
                     }
                     dba.removeFavourite(id);
                     dba.close();
-                    Toast.makeText(getContext(), "Removed from Favourites", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
                 }
 
         });
 
 
-
-
-        /*ByteArrayInputStream imageStream = new ByteArrayInputStream(image);
-        Bitmap photo = BitmapFactory.decodeStream(imageStream);
-        */
         if(image!=null) {
-            Bitmap photo = dba.base64ToBitmap(image);
+            Bitmap photo = Utils.base64ToBitmap(image);
             image_1.setImageBitmap(photo);
+            image_1.setVisibility(View.VISIBLE);
+            //video_1.setVisibility(View.GONE);
         }
+            if(video!=null)
+            {
+                File f=new File(video);
+                String data=Utils.fileToBase64(f);
+                Log.d("data video",data);
+                Log.d("data","not available");
+                Uri uri=Uri.fromFile(f);
+                //video_1.setVideoURI(uri);
+                //video_1.setVisibility(View.VISIBLE);
+                //image_1.setVisibility(View.GONE);
+            }
+
         latitude_1.setText("Latitude " +latitude);
         longitude_1.setText("Longitude " + longitude);
         category_1.setText("Category " + category);

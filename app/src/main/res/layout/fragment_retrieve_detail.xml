@@ -27,26 +27,24 @@
         android:background="@android:color/darker_gray"
         android:id="@+id/separatorLine1"
         android:layout_below="@id/movieTitle"/>
-
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_gravity="center"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:id="@+id/moviePoster"
+        android:id="@+id/imageView"
         android:src="@drawable/noimage"
         android:layout_below="@+id/separatorLine1"
         android:padding="5dp"
         android:adjustViewBounds="true" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/separatorLine1"
-        android:layout_toEndOf="@id/moviePoster"
-        android:layout_toRightOf="@+id/moviePoster"
+        android:layout_toEndOf="@id/imageView"
+        android:layout_toRightOf="@+id/imageView"
         android:orientation="vertical"
         android:id="@+id/movieInfoBox">
         <TextView
@@ -69,7 +67,7 @@
             android:layout_gravity="center" />
 
         <CheckBox android:id="@+id/star"
-            style="?android:attr/starStyle"
+            style="?android:attr/checkboxStyle"
             android:layout_width="wrap_content"
             android:padding="10dp"
             android:layout_height="wrap_content"
@@ -83,7 +81,7 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
         android:id="@+id/separatorLine2"
-        android:layout_below="@id/moviePoster"/>
+        android:layout_below="@id/imageView"/>
 
 
     <TextView

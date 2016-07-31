@@ -90,8 +90,9 @@ public class StoreActivityFragment extends Fragment {
         // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
 
-        FetchCategories fetchCategories=new FetchCategories();
-        fetchCategories.execute();
+        //FetchCategories fetchCategories=new FetchCategories();
+        //
+        // fetchCategories.execute();
 
         // Spinner click listener
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
