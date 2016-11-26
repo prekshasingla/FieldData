@@ -90,6 +90,7 @@ public class DBAdapter {
 
 
     public void removeFavourite(String movieid){
+        Log.e("Id ",movieid);
         String qry="delete from fielddata where id='"+movieid+"';";
         db.execSQL(qry);
     }

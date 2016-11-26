@@ -62,7 +62,15 @@ public class RetrieveActivityFragment extends Fragment {
                 startActivity(i);
             }
         });
-        return rootView; }
+        return rootView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new FetchFavoriteMoviesTask().execute();
+    }
 
     public class FetchFavoriteMoviesTask extends AsyncTask<Void, Void, FieldData[]> {
 

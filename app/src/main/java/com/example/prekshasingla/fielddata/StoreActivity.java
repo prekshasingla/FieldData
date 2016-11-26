@@ -1,8 +1,10 @@
 package com.example.prekshasingla.fielddata;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,15 +27,17 @@ public class StoreActivity extends AppCompatActivity {
 
     DBAdapter dba;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         dba = new DBAdapter(this);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
 
@@ -100,21 +104,21 @@ public class StoreActivity extends AppCompatActivity {
                     if (fieldDatas[i].video != null) {
                         File f = new File(fieldDatas[i].video);
                         fieldDatas[i].video = Utils.fileToBase64(f);
-                        Log.d("Video", fieldDatas[i].video);
+                        //Log.d("Video", fieldDatas[i].video);
                     }
 
 
-                    url[i] = new URL("http://pieronline.rmsi.com/Rapti_publish/RestServiceImpl.svc/InsertData?image='" + fieldDatas[i].image + "'&video='" + fieldDatas[i].video + "'&latitude=" + fieldDatas[i].latitude + "&longitude=" + fieldDatas[i].longitude + "&label=" + fieldDatas[i].text + "&category=" + fieldDatas[i].category);
+                    //url[i] = new URL("http://pieronline.rmsi.com/Rapti_publish/RestServiceImpl.svc/InsertData?image='" + fieldDatas[i].image + "'&video='" + fieldDatas[i].video + "'&latitude=" + fieldDatas[i].latitude + "&longitude=" + fieldDatas[i].longitude + "&label=" + fieldDatas[i].text + "&category=" + fieldDatas[i].category);
 
-                    Log.d("image",fieldDatas[i].image);
+                    //Log.d("image",fieldDatas[i].image);
                     //Log.d("video",fieldDatas[i].video);
-                    Log.d("Lat",fieldDatas[i].latitude);
-                    urlConnection = (HttpURLConnection) url[i].openConnection();
-                    urlConnection.setReadTimeout(25000);
-                    urlConnection.setConnectTimeout(25000);
-                    urlConnection.setRequestMethod("GET");
-                    Log.d("URL", url[i].toString());
-                    urlConnection.connect();
+                    //Log.d("Lat",fieldDatas[i].latitude);
+                    //urlConnection = (HttpURLConnection) url[i].openConnection();
+                    //urlConnection.setReadTimeout(25000);
+                    //urlConnection.setConnectTimeout(25000);
+                    //urlConnection.setRequestMethod("GET");
+                    //Log.d("URL", url[i].toString());
+                    //urlConnection.connect();
                     try {
                         dba.open();
                     } catch (SQLException e) {
@@ -136,8 +140,8 @@ public class StoreActivity extends AppCompatActivity {
                     }
 
                 }
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
+            } catch (Exception e) {
+                //Log.e(LOG_TAG, "Error ", e);
                 return null;
             } finally {
                 //urlConnection.disconnect();

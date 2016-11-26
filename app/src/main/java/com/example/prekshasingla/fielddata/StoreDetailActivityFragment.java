@@ -135,9 +135,9 @@ public class StoreDetailActivityFragment extends Fragment {
                             View convertView1 = (View) rootView.findViewById(j);
                             ed = (EditText) convertView1.findViewById(R.id.edit_text);
                             textList.add(ed.getText().toString());
-                            TextView tv1 = new TextView(getActivity());
-                            tv1.setText(ed.getText().toString());
-                            linearLayout.addView(tv1);
+                            //TextView tv1 = new TextView(getActivity());
+                            //tv1.setText(ed.getText().toString());
+                            //linearLayout.addView(tv1);
 //                                Log.v("EditText", ed.getText().toString());
                         }
                         text=Utils.combineLabels(textList);
@@ -166,9 +166,10 @@ public class StoreDetailActivityFragment extends Fragment {
                                 Log.e("SqlException", e.toString());
                             }
                             dba.updateFavourite(image,video,latitude,longitude,text,category);
-                            dba.close();
+                            //dba.close();
 
-                            Toast.makeText(getActivity(), "Saving", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
+                            getActivity().finish();
                         }
                         else{
                             Toast.makeText(getActivity(), "Location not available", Toast.LENGTH_LONG).show();

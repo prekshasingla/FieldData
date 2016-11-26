@@ -77,8 +77,10 @@ public class RetrieveDetailActivityFragment extends Fragment {
                         Log.e("SqlException", e.toString());
                     }
                     dba.removeFavourite(id);
-                    dba.close();
+
+                //dba.close();
                     Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
                 }
 
         });

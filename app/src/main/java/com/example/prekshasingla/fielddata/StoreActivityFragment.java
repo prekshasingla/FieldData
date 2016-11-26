@@ -54,12 +54,12 @@ public class StoreActivityFragment extends Fragment {
         // Spinner Drop down elements
         categories = new ArrayList<String>();
         categories.add("Select");
-        categories.add("Category1");
-        categories.add("Category2");
-        categories.add("Category3");
-        categories.add("Category4");
-        categories.add("Category5");
-        categories.add("Category6");
+        categories.add("RaptiFlood");
+        categories.add("GangaFlood");
+        categories.add("BarakFlood");
+        categories.add("NepalEarthquake");
+        categories.add("CentralBasinFlood");
+        categories.add("Landslide");
 
         // Creating adapter for spinner
         dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categories){ @Override
@@ -102,21 +102,21 @@ public class StoreActivityFragment extends Fragment {
                 String text=null;
                 switch(category)
                 {
-                    case "Category1": text="label1.1,label1.2";
+                    case "RaptiFlood": text="WaterLevel,Tags";
                         break;
-                    case "Category2": text="label2.1,label2.2";
-                        break;
-
-                    case "Category3": text="label3.1,label3.2";
+                    case "GangaFlood": text="WaterLevel,Area,NoOfPeople";
                         break;
 
-                    case "Category4": text="label4.1,label4.2";
+                    case "BarakFlood": text="WaterLevel,Area,Tags";
                         break;
 
-                    case "Category5": text="label5.1,label5.2";
+                    case "NepalEarthquake": text="Scale,Tags,Damage";
                         break;
 
-                    case "Category6": text="label6.1,label6.2";
+                    case "CentralBasinFlood": text="Damage,WaterLevel";
+                        break;
+
+                    case "Landslide": text="Damage,Tags";
                         break;
                     default:
                         break;
@@ -207,9 +207,9 @@ public class StoreActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-               // categories.clear();
-                //categories.add(result);
-                //dataAdapter.notifyDataSetChanged();
+                categories.clear();
+                categories.add(result);
+                dataAdapter.notifyDataSetChanged();
             }
         }
     }

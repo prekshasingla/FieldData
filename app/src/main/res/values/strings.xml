@@ -3,10 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="action_review">Review</string>
     <string name="action_sync">Sync</string>
-    <string name="title_activity_store">StoreActivity</string>
-    <string name="title_activity_store_detail">StoreDetailActivity</string>
-    <string name="title_activity_retrieve">RetrieveActivity</string>
-    <string name="title_activity_retrieve_detail">RetrieveDetailActivity</string>
+    <string name="title_activity_store">Field Data</string>
+    <string name="title_activity_store_detail">Store</string>
+    <string name="title_activity_retrieve">Review</string>
+    <string name="title_activity_retrieve_detail">Details</string>
     <string name="release_date">Release Date</string>
     <string name="user_rating">User Rating</string>
     <string name="read_reviews">Read Reviews</string>
