@@ -1,7 +1,7 @@
 <?php
    $host        = "host=127.0.0.1";
    $port        = "port=5432";
-   $dbname      = "dbname=fielddatacollector";
+   $dbname      = "dbname=fielddatacollector2";
    $credentials = "user=postgres password=root";
 
    $db = pg_connect( "$host $port $dbname $credentials"  );
