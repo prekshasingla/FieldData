@@ -52,7 +52,7 @@ public class MainActivityFragment extends Fragment {
                 // close this activity
                 getActivity().finish();
             }
-        }, 3 * 1000);
+        },  1000);
 
 
         return rootView;
